@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import loadingSoundUrl from '@/assets/music/loading_sound.mp3'
 
-export default function Loading() {
+export function Loading() {
     useEffect(() => {
         const audio = new Audio(loadingSoundUrl)
         audio.play().catch(() => { })

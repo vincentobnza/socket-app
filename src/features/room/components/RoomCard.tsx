@@ -4,7 +4,7 @@ import type { Room } from '../types/room.types'
 import { getInitials } from '../utils'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, Users, LockKeyhole, LockKeyholeOpen } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigateToPage } from '@/shared/hooks/useNavigateToPage'
 
 
 
@@ -16,10 +16,8 @@ type RoomCardProps = {
 
 export function RoomCard({ room, className }: RoomCardProps) {
     const { title, description, memberCount, messageCount, privacyType = 'public' } = room
-    const navigate = useNavigate()
-    const handleJoinRoom = () => {
-        navigate(`/chat/${room.id}`)
-    }
+    const handleJoinRoom = useNavigateToPage({ path: `/chat/:roomId`, params: { roomId: room.id } });
+
 
     return (
         <article

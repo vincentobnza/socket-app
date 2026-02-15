@@ -7,3 +7,5 @@ export interface Room {
   privacyType: 'public' | 'private'
   isMine?: boolean
 }
+
+export type CreateRoomInput = Pick<Room, 'title' | 'description' | 'privacyType'>

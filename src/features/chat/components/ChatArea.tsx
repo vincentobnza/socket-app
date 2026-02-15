@@ -15,7 +15,7 @@ export function ChatArea({ messages }: ChatAreaProps) {
   }, [messages.length]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto rounded-lg bg-neutral-900/50 p-3 space-y-3 mb-4">
+    <div className="flex-1 min-h-0 overflow-y-auto rounded-lg  p-3 space-y-3 mb-4">
       {messages.length === 0 ? (
         <div className="min-h-[calc(100%-100px)] flex flex-col items-center justify-center">
           <img src={EmptyChatImage} alt="Empty Chat" className="size-18 grayscale opacity-50 object-contain" />

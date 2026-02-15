@@ -8,4 +8,6 @@ export const SOCKET_EVENTS = {
   ROOM_USER_COUNT: 'room_user_count',
   USER_JOINED: 'user_joined',
   USER_LEFT: 'user_left',
+  USER_IS_TYPING: 'user_is_typing',
+  USER_STOPPED_TYPING: 'user_stopped_typing',
 } as const;

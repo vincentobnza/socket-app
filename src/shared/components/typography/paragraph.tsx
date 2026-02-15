@@ -8,7 +8,7 @@ type ParagraphProps = {
 }
 export function Paragraph({ children, className }: ParagraphProps) {
     return (
-        <p className={cn("text-xs md:text-sm lg:text-base font-medium text-muted-foreground", className)}>
+        <p className={cn("text-xs md:text-sm font-medium text-muted-foreground", className)}>
             {children}
         </p>
     )

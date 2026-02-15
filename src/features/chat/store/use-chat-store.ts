@@ -24,6 +24,7 @@ type ChatState = {
   messages: Message[]
   isConnected: boolean
   userCount: number
+  typingUserIds: Set<string>
 }
 
 type ChatActions = {
@@ -34,6 +35,8 @@ type ChatActions = {
   setUserCount: (count: number) => void
   clearMessages: () => void
   reset: () => void
+  emitTyping: () => void
+  emitStoppedTyping: () => void
 }
 
 const initialState: ChatState = {
@@ -43,6 +46,7 @@ const initialState: ChatState = {
   messages: [],
   isConnected: false,
   userCount: 0,
+  typingUserIds: new Set(),
 }
 
 function createMessage(text: string, sender: Message['sender']): Message {
@@ -98,16 +102,39 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       if (!currentRoomId) return
       if (payload.userId === mySocketId) return
       playLeaveChatSound()
-      set((state) => ({
-        messages: [
-          ...state.messages,
-          createMessage('A user left the room', 'system'),
-        ],
-      }))
+      set((state) => {
+        const nextTyping = new Set(state.typingUserIds)
+        nextTyping.delete(payload.userId)
+        return {
+          messages: [
+            ...state.messages,
+            createMessage('A user left the room', 'system'),
+          ],
+          typingUserIds: nextTyping,
+        }
+      })
     })
 
     s.on(SOCKET_EVENTS.ROOM_USER_COUNT, (count: number) => {
       set({ userCount: count })
+    })
+
+    s.on(SOCKET_EVENTS.USER_IS_TYPING, (payload: { userId: string }) => {
+      const { currentRoomId, mySocketId } = get()
+      if (!currentRoomId || payload.userId === mySocketId) return
+      set((state) => ({
+        typingUserIds: new Set(state.typingUserIds).add(payload.userId),
+      }))
+    })
+
+    s.on(SOCKET_EVENTS.USER_STOPPED_TYPING, (payload: { userId: string }) => {
+      const { mySocketId } = get()
+      if (payload.userId === mySocketId) return
+      set((state) => {
+        const next = new Set(state.typingUserIds)
+        next.delete(payload.userId)
+        return { typingUserIds: next }
+      })
     })
   },
 
@@ -129,7 +156,21 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     if (socket && currentRoomId) {
       socket.emit(SOCKET_EVENTS.LEAVE_ROOM)
     }
-    set({ currentRoomId: null, messages: [], userCount: 0 })
+    set({ currentRoomId: null, messages: [], userCount: 0, typingUserIds: new Set() })
+  },
+
+  emitTyping() {
+    const { socket, currentRoomId } = get()
+    if (socket && currentRoomId) {
+      socket.emit(SOCKET_EVENTS.USER_IS_TYPING, currentRoomId)
+    }
+  },
+
+  emitStoppedTyping() {
+    const { socket, currentRoomId } = get()
+    if (socket && currentRoomId) {
+      socket.emit(SOCKET_EVENTS.USER_STOPPED_TYPING, currentRoomId)
+    }
   },
 
   sendMessage(text: string) {

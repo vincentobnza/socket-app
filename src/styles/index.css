@@ -57,7 +57,7 @@ body {
   --radius: 0.625rem;
   --background: oklch(20.5% 0 0);
   --foreground: oklch(1 0 0);
-  --card: oklch(22% 0 0);
+  --card: oklch(21% 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -155,4 +155,20 @@ body {
 
 *::-webkit-scrollbar-thumb:hover {
   background: oklch(0.45 0 0);
+}
+
+/* Typing indicator dots */
+@keyframes typing-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.animate-typing-bounce {
+  animation: typing-bounce 2.2s ease-in-out infinite;
 }
